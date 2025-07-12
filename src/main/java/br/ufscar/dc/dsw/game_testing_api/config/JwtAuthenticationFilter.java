@@ -44,15 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // ---- INÍCIO DO NOSSO LOG DE DEPURAÇÃO ----
-            System.out.println("========================================================");
-            System.out.println(">>>>>> FILTRO JWT - DEPURAÇÃO <<<<<<");
-            System.out.println("Rota Acessada: " + request.getRequestURI());
-            System.out.println("Usuário extraído do token: " + userEmail);
-            System.out.println("Permissões (Authorities) do usuário: " + userDetails.getAuthorities());
-            System.out.println("========================================================");
-            // ---- FIM DO LOG DE DEPURAÇÃO ----
-
             if (tokenService.isTokenValid(jwt, (br.ufscar.dc.dsw.game_testing_api.model.Usuario) userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
