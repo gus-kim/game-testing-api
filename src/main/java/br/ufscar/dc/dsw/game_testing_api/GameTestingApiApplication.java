@@ -1,0 +1,13 @@
+package br.ufscar.dc.dsw.game_testing_api;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class GameTestingApiApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(GameTestingApiApplication.class, args);
+	}
+
+}
