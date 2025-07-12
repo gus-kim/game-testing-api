@@ -88,7 +88,7 @@ A documentação completa dos endpoints será mantida em uma Collection do Postm
 ## 👨‍💻 Equipe
 
 - **Gustavo Kim Alcantara** - Pacote 1: Gestão de Usuários e Segurança
-- **Nome Integrante B** - Pacote 2: Gestão de Estratégias
+- **Gabriel Lucchetta Garcia Sanchez** - Pacote 2: Gestão de Estratégias
 - **Nome Integrante C** - Pacote 3: Gestão de Projetos e Membros
 - **Nome Integrante D** - Pacote 4: Criação e Consulta de Sessões de Teste
 - **Nome Integrante E** - Pacote 5: Ciclo de Vida da Sessão e Registro de Bugs
