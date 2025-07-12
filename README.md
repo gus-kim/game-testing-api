@@ -37,7 +37,7 @@ Siga os passos abaixo para executar a aplicação localmente.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/seu-usuario/game-testing-api.git](https://github.com/seu-usuario/game-testing-api.git)
+    git clone [https://github.com/gus-kim/game-testing-api](https://github.com/gus-kim/game-testing-api)
     ```
 
 2.  **Acesse a pasta do projeto:**
