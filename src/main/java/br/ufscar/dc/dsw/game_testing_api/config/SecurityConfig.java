@@ -9,10 +9,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -30,7 +36,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/estrategias/**").permitAll()
                         .anyRequest().authenticated()
-                );
+                ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
 
 
         return http.build();
