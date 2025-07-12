@@ -19,18 +19,28 @@ public class GameTestingApiApplication {
 	@Bean
 	public CommandLineRunner init(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
 		return args -> {
-			// Verifica se o usuário admin já existe para não criar duplicado
+			// Cria usuário ADMIN se não existir
 			if (usuarioRepository.findByEmail("admin@email.com").isEmpty()) {
-				System.out.println("Criando usuário admin de teste...");
-
+				System.out.println("Criando usuário ADMIN de teste...");
 				Usuario admin = new Usuario();
-				admin.setNome("Admin Teste");
+				admin.setNome("Admin Mestre");
 				admin.setEmail("admin@email.com");
-				admin.setSenha(passwordEncoder.encode("senhaforte"));
+				admin.setSenha(passwordEncoder.encode("admin123")); // Use uma senha diferente para o admin
 				admin.setRole(Role.ADMIN);
-
 				usuarioRepository.save(admin);
-				System.out.println("Usuário admin de teste criado!");
+				System.out.println("Usuário ADMIN de teste criado!");
+			}
+
+			// Cria usuário TESTER se não existir
+			if (usuarioRepository.findByEmail("tester@email.com").isEmpty()) {
+				System.out.println("Criando usuário TESTER de teste...");
+				Usuario tester = new Usuario();
+				tester.setNome("Testador Padrão");
+				tester.setEmail("tester@email.com");
+				tester.setSenha(passwordEncoder.encode("tester123")); // E outra para o tester
+				tester.setRole(Role.TESTER);
+				usuarioRepository.save(tester);
+				System.out.println("Usuário TESTER de teste criado!");
 			}
 		};
 	}
