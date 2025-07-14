@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface ProjetoRepository extends JpaRepository<Projeto, Long> {
     List<Projeto> findByMembrosPermitidos_Id(Long id);
+
+    boolean existsByNomeIgnoreCase(String nome);
+
+    boolean existsByNomeIgnoreCaseAndIdNot(String nome, Long id);
 }

@@ -1,9 +1,12 @@
 package br.ufscar.dc.dsw.game_testing_api.controller;
 
 import br.ufscar.dc.dsw.game_testing_api.dto.ProjetoDTO;
+import br.ufscar.dc.dsw.game_testing_api.exceptions.ResourceNotFoundException;
 import br.ufscar.dc.dsw.game_testing_api.model.Usuario;
 import br.ufscar.dc.dsw.game_testing_api.service.ProjetoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,9 +23,13 @@ public class ProjetoController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProjetoDTO> criarProjeto(@RequestBody ProjetoDTO projetoDTO) {
-        ProjetoDTO novoProjeto = projetoService.criarProjeto(projetoDTO);
-        return ResponseEntity.ok(novoProjeto);
+    public ResponseEntity<?> criarProjeto(@RequestBody ProjetoDTO projetoDTO) {
+        try {
+            ProjetoDTO novoProjeto = projetoService.criarProjeto(projetoDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novoProjeto);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @GetMapping
@@ -35,29 +42,47 @@ public class ProjetoController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProjetoDTO> atualizarProjeto(@PathVariable Long id, @RequestBody ProjetoDTO projetoDTO) {
-        ProjetoDTO projetoAtualizado = projetoService.atualizarProjeto(id, projetoDTO);
-        return ResponseEntity.ok(projetoAtualizado);
+    public ResponseEntity<?> atualizarProjeto(@PathVariable Long id, @RequestBody ProjetoDTO projetoDTO) {
+        try {
+            ProjetoDTO projetoAtualizado = projetoService.atualizarProjeto(id, projetoDTO);
+            return ResponseEntity.ok(projetoAtualizado);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletarProjeto(@PathVariable Long id) {
-        projetoService.deletarProjeto(id);
-        return ResponseEntity.noContent().build();
+        try {
+            projetoService.deletarProjeto(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/{id}/membros")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> adicionarMembro(@PathVariable Long id, @RequestBody Long usuarioId) {
-        projetoService.adicionarMembro(id, usuarioId);
-        return ResponseEntity.ok().build();
+        try {
+            projetoService.adicionarMembro(id, usuarioId);
+            return ResponseEntity.ok().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}/membros/{usuarioId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removerMembro(@PathVariable Long id, @PathVariable Long usuarioId) {
-        projetoService.removerMembro(id, usuarioId);
-        return ResponseEntity.ok().build();
+        try {
+            projetoService.removerMembro(id, usuarioId);
+            return ResponseEntity.ok().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
