@@ -10,6 +10,7 @@ import br.ufscar.dc.dsw.game_testing_api.repository.ProjetoRepository;
 import br.ufscar.dc.dsw.game_testing_api.repository.SessionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import br.ufscar.dc.dsw.game_testing_api.repository.BugRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,11 +21,13 @@ public class SessionService {
     private final SessionRepository sessionRepository;
     private final ProjetoRepository projetoRepository;
     private final EstrategiaRepository estrategiaRepository;
+    private final BugRepository bugRepository;
 
-    public SessionService(SessionRepository sessionRepository, ProjetoRepository projetoRepository, EstrategiaRepository estrategiaRepository) {
+    public SessionService(SessionRepository sessionRepository, ProjetoRepository projetoRepository, EstrategiaRepository estrategiaRepository, BugRepository bugRepository) {
         this.sessionRepository = sessionRepository;
         this.projetoRepository = projetoRepository;
         this.estrategiaRepository = estrategiaRepository;
+        this.bugRepository = bugRepository;
     }
 
     public List<Session> getAllSessions() {
@@ -67,25 +70,37 @@ public class SessionService {
 
     public void deleteSession(Long id) {
         if (!sessionRepository.existsById(id)) {
-            throw new EntityNotFoundException("Session not found");
+            throw new EntityNotFoundException("Sessão não encontrada");
         }
+        Session session = getSessionById(id);
+
+        // deleta bugs diretamente
+        bugRepository.deleteAllBySession_Id(id);
+
+        // depois deleta sessão
         sessionRepository.deleteById(id);
     }
 
+
     public Session updateSessionStatus(Long id, String newStatusStr) {
         Session session = getSessionById(id);
+        SessionState newStatus = SessionState.valueOf(newStatusStr.toUpperCase());
 
-        SessionState newStatus;
-        try {
-            newStatus = SessionState.valueOf(newStatusStr.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid status value");
-        }
-
-        if (newStatus == SessionState.IN_PROGRESS && session.getStartedAt() == null) {
-            session.setStartedAt(LocalDateTime.now());
-        } else if (newStatus == SessionState.FINISHED && session.getEndedAt() == null) {
-            session.setEndedAt(LocalDateTime.now());
+        switch (newStatus) {
+            case IN_PROGRESS:
+                if (session.getStatus() != SessionState.CREATED) {
+                    throw new IllegalStateException("A sessão só pode ser iniciada a partir do estado CRIADA.");
+                }
+                session.setStartedAt(LocalDateTime.now());
+                break;
+            case FINISHED:
+                if (session.getStatus() != SessionState.IN_PROGRESS) {
+                    throw new IllegalStateException("A sessão só pode ser finalizada se estiver em execução.");
+                }
+                session.setEndedAt(LocalDateTime.now());
+                break;
+            default:
+                throw new IllegalArgumentException("Transição de estado inválida.");
         }
 
         session.setStatus(newStatus);

@@ -85,4 +85,14 @@ public class ProjetoController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarProjetoPorId(@PathVariable Long id) {
+        try {
+            ProjetoDTO projeto = projetoService.buscarProjetoPorId(id);
+            return ResponseEntity.ok(projeto);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

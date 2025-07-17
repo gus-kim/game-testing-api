@@ -3,6 +3,8 @@ package br.ufscar.dc.dsw.game_testing_api.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "sessions")
@@ -38,6 +40,17 @@ public class Session {
     @Column(name = "ended_at")
     @JsonProperty("ended_at")
     private LocalDateTime endedAt;
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bug> bugs = new ArrayList<>();
+
+    public List<Bug> getBugs() {
+        return bugs;
+    }
+
+    public void setBugs(List<Bug> bugs) {
+        this.bugs = bugs;
+    }
 
     @PrePersist
     protected void onCreate() {
