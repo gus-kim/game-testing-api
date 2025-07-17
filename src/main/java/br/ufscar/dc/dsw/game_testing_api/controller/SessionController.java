@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/sessions")
+@RequestMapping("/api/sessoes")
 public class SessionController {
 
     private final SessionService sessionService;

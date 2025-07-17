@@ -86,4 +86,11 @@ public class ProjetoService {
         dto.setMemberIds(projeto.getMembrosPermitidos().stream().map(Usuario::getId).collect(Collectors.toList()));
         return dto;
     }
+
+    public ProjetoDTO buscarProjetoPorId(Long id) {
+        Projeto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado"));
+        return toDTO(projeto);
+    }
+
 }
